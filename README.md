@@ -1,0 +1,3 @@
+### scenic route
+---
+Scene perception is thought to proceed in a global-to-local manner, wherein the gist of the scene can be discerned from a single glance from a display lasting as briefly as 20ms (Potter, 1975; Greene & Oliva, 2009). Scene perception is also aided when objects are in their typical locations: an airplane in the sky and a lamp above a table elicit sharper neural representations than scenes with atypically placed objects (Kaiset et al., 2019). In this study we investigate to what extent the basic ability for rapid parallel meaning extraction in scenes is driven by top-down predictions of scene structure and organization. 
