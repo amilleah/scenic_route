@@ -1,7 +1,28 @@
 PennController.ResetPrefix(null); // Shorten command names (keep this line here))
+DebugOff()
+
+PreloadZip('https://pcibexbucket.s3.us-east-2.amazonaws.com/stim.zip');
+// load stim
+
+// Define jitter settings
+let min = 400; // ms
+let max = 600; // ms
+
+let jitterValues = [];
+for (let i = min; i <= max; i += 10) {
+    jitterValues.push(i);
+}
+
+// Function to select a random element from an array (for jitter)
+function sample(array) {
+    let sel = Math.floor(Math.random() * array.length / 10) * 10;
+    return array[sel];
+}
+
 
 function SepWithN(sep, main, n) {
     this.args = [sep,main];
+
 
     this.run = function(arrays) {
         assert(arrays.length == 2, "Wrong number of arguments (or bad argument) to SepWithN");
@@ -29,8 +50,8 @@ function sepWithN(sep, main, n) { return new SepWithN(sep, main, n); }
 // Start with welcome screen, then present test trials in a random order,
 // and show the final screen after sending the results
 Sequence( "consent", "prolificid", "welcome" , "practiceInstructions",
-          "practice1" , "practice2", "practice3", "practice4", "practice5", "practice6",
-          "begin", sepWithN("break", randomize("test"), 100) , "send" , "final" )
+          "practice1", "practice2", "practice3", "practice4", "begin", 
+          sepWithN("break", randomize("test"), 50) , "send" , "final" )
 
 Header( /* void */ )
     // This .log command will apply to all trials
@@ -162,7 +183,7 @@ newTrial( "practiceInstructions" ,
     ,
     newText("You will now see a few practice trials.").color("white")
     ,
-    newText("Each trial will consist of two images of scenes. Sometimes the images will be flipped or scrambled").color('white')
+    newText("Each trial will consist of two images of scenes. Sometimes the images will be inverted or scrambled").color('white')
     ,
     newText("Remember, press ‘2’ with the LEFT INDEX FINGER if the two images are SAME, and press ‘1’ with the LEFT MIDDLE FINGER if the two images are the DIFFERENT.").color('white')
     ,
@@ -201,7 +222,7 @@ newTrial("practice1" ,
     getText("mask2").remove()    
     ,
     // Prime, shown on screen for 42ms
-    newImage("prime","sun_aaapjusaqihskred_image.jpg")
+    newImage("prime","sun_ajxncqcvqyevolbb_altered_transposed_intact.png")
         .print("center at 50vw","middle at 50vh")
     ,
     newTimer("primeTimer", 300),
@@ -212,7 +233,7 @@ newTrial("practice1" ,
     getText("mask3").remove()    
     ,    
     // Target
-    newImage("target","sun_aaapjusaqihskred_image.jpg")
+    newImage("target","sun_ajxncqcvqyevolbb_intact_transposed_intact.png")
         .print("center at 50vw","middle at 50vh")
         ,
         newTimer("targetTimer", 300),
@@ -222,8 +243,8 @@ newTrial("practice1" ,
     newText("mask4"," ")
     ,   
     newKey("answerTarget", "12")
-        .wait()                 // Only proceed after a keypress on F or J
-        .test.pressed("2")      // Set the "guide" Tooltip element's feedback text accordingly
+        .wait()                
+        .test.pressed("1")    
         .success( 
             getImage("target").remove(),
             newText("correct", "Correct")
@@ -242,7 +263,7 @@ newTrial("practice1" ,
             )
     ,
     newText("jitter", " "),
-    newTimer("jitterTimer", 600),
+    newTimer("jitterTimer", 450),
     getText("jitter").remove()
     
 )
@@ -267,7 +288,7 @@ newTrial("practice2" ,
     getText("mask2").remove()    
     ,
     // Prime, shown on screen for 42ms
-    newImage("prime","sun_aafqfjpechscyidz_scrambled.jpg")
+    newImage("prime","sun_aalcoddsgakiyibg_intact_intact_intact.png")
         .print("center at 50vw","middle at 50vh")
     ,
     newTimer("primeTimer", 300),
@@ -277,15 +298,16 @@ newTrial("practice2" ,
     newTimer("mask3Timer", 500),                       
     getText("mask3").remove()    
     ,    
-    // Target, shown on screen until F or J is pressed
-    newImage("target","sun_aafqfjpechscyidz_scrambled.jpg")
+    // Target
+    newImage("target","sun_aalcoddsgakiyibg_intact_intact_intact.png")
         .print("center at 50vw","middle at 50vh")
-    ,
+        ,
         newTimer("targetTimer", 300),
     getImage("target").remove()
     ,
+    // Mask shown on screen until 1 or 2 is pressed
     newText("mask4"," ")
-    , 
+    ,   
     newKey("answerTarget", "12")
         .wait()                 // Only proceed after a keypress on F or J
         .test.pressed("2")      // Set the "guide" Tooltip element's feedback text accordingly
@@ -332,7 +354,7 @@ newTrial("practice3" ,
     getText("mask2").remove()    
     ,
     // Prime, shown on screen for 42ms
-    newImage("prime","sun_aahnsyqkaacnevsz_scrambled.jpg")
+    newImage("prime","sun_btylpseeemoqeamc_intact_intact_rotated.png")
         .print("center at 50vw","middle at 50vh")
     ,
     newTimer("primeTimer", 300),
@@ -342,15 +364,16 @@ newTrial("practice3" ,
     newTimer("mask3Timer", 500),                       
     getText("mask3").remove()    
     ,    
-    // Target, shown on screen until F or J is pressed
-    newImage("target","sun_aahnsyqkaacnevsz_scrambledflip.jpg")
+    // Target
+    newImage("target","sun_btylpseeemoqeamc_altered_intact_rotated.png")
         .print("center at 50vw","middle at 50vh")
-    ,
-    newTimer("targetTimer", 300),
+        ,
+        newTimer("targetTimer", 300),
     getImage("target").remove()
     ,
+    // Mask shown on screen until 1 or 2 is pressed
     newText("mask4"," ")
-    , 
+    ,   
     newKey("answerTarget", "12")
         .wait()                 // Only proceed after a keypress on F or J
         .test.pressed("1")      // Set the "guide" Tooltip element's feedback text accordingly
@@ -372,7 +395,7 @@ newTrial("practice3" ,
             )
     ,
     newText("jitter", " "),
-    newTimer("jitterTimer", 600),
+    newTimer("jitterTimer", 550),
     getText("jitter").remove()
     
 )
@@ -397,7 +420,7 @@ newTrial("practice4" ,
     getText("mask2").remove()    
     ,
     // Prime, shown on screen for 42ms
-    newImage("prime","sun_bpenmwoedrfltrhu_image.jpg")
+    newImage("prime","sun_bzzvbegxtfxrnaqh_altered_transposed_intact.png")
         .print("center at 50vw","middle at 50vh")
     ,
     newTimer("primeTimer", 300),
@@ -407,18 +430,19 @@ newTrial("practice4" ,
     newTimer("mask3Timer", 500),                       
     getText("mask3").remove()    
     ,    
-    // Target, shown on screen until F or J is pressed
-    newImage("target","sun_bpenmwoedrfltrhu_imageflip.jpg")
+    // Target
+    newImage("target","sun_bzzvbegxtfxrnaqh_altered_transposed_intact.png")
         .print("center at 50vw","middle at 50vh")
-    ,
-    newTimer("targetTimer", 300),
+        ,
+        newTimer("targetTimer", 300),
     getImage("target").remove()
     ,
+    // Mask shown on screen until 1 or 2 is pressed
     newText("mask4"," ")
-    , 
+    ,   
     newKey("answerTarget", "12")
         .wait()                 // Only proceed after a keypress on F or J
-        .test.pressed("1")      // Set the "guide" Tooltip element's feedback text accordingly
+        .test.pressed("2")      // Set the "guide" Tooltip element's feedback text accordingly
         .success( 
             getImage("target").remove(),
             newText("correct", "Correct")
@@ -437,140 +461,11 @@ newTrial("practice4" ,
             )
     ,
     newText("jitter", " "),
-    newTimer("jitterTimer", 600),
+    newTimer("jitterTimer", 500),
     getText("jitter").remove()
     
 )
 
-newTrial("practice5" ,
-    // Text element at the top of the page to signal this is a practice trial
-    newText("Practice").color("white").print("center at 50vw","top at 1em")
-    ,
-    // Display all future Text elements centered on the page, and log their display time code
-    defaultText.center().print("center at 50vw","middle at 50vh")
-    ,
-    // Automatically start and wait for Timer elements when created
-    defaultTimer.start().wait()
-    ,
-    // Mask, shown on screen for 500ms
-    newText("mask","+").color('white'),
-    newTimer("maskTimer", 200),                       
-    getText("mask").remove()
-    ,
-    newText("mask2"," "),
-    newTimer("mask2Timer", 200),                       
-    getText("mask2").remove()    
-    ,
-    // Prime, shown on screen for 42ms
-    newImage("prime","sun_bxouqabjhkwcbdei_scrambled.jpg")
-        .print("center at 50vw","middle at 50vh")
-    ,
-    newTimer("primeTimer", 300),
-    getImage("prime").remove()
-    ,
-    newText("mask3"," "),
-    newTimer("mask3Timer", 500),                       
-    getText("mask3").remove()    
-    ,    
-    // Target, shown on screen until F or J is pressed
-    newImage("target","sun_bxouqabjhkwcbdei_scrambledflip.jpg")
-        .print("center at 50vw","middle at 50vh")
-    ,
-    newTimer("targetTimer", 300),
-    getImage("target").remove()
-    ,
-    newText("mask4"," ")
-    , 
-    newKey("answerTarget", "12")
-        .wait()                 // Only proceed after a keypress on F or J
-        .test.pressed("1")      // Set the "guide" Tooltip element's feedback text accordingly
-        .success( 
-            getImage("target").remove(),
-            newText("correct", "Correct")
-            .color("white")
-            .print("center at 50vw","center at 25vh"),
-            newTimer(" ", 500)
-            //.wait()
-            //getTooltip("guide").text("<p>No, the second word was <em>read</em>.</p> You should have pressed H.") 
-        )
-        .failure( 
-            getImage("target").remove(),
-            newText("incorrect", "Wrong")
-            .color("white")
-            .print("center at 50vw","center at 25vh"),
-            newTimer("  ", 500)
-            )
-    ,
-    newText("jitter", " "),
-    newTimer("jitterTimer", 600),
-    getText("jitter").remove()
-    
-)
-
-newTrial("practice6" ,
-    // Text element at the top of the page to signal this is a practice trial
-    newText("Practice").color("white").print("center at 50vw","top at 1em")
-    ,
-    // Display all future Text elements centered on the page, and log their display time code
-    defaultText.center().print("center at 50vw","middle at 50vh")
-    ,
-    // Automatically start and wait for Timer elements when created
-    defaultTimer.start().wait()
-    ,
-    // Mask, shown on screen for 500ms
-    newText("mask","+").color('white'),
-    newTimer("maskTimer", 200),                       
-    getText("mask").remove()
-    ,
-    newText("mask2"," "),
-    newTimer("mask2Timer", 200),                       
-    getText("mask2").remove()    
-    ,
-    // Prime, shown on screen for 42ms
-    newImage("prime","sun_bzzvbegxtfxrnaqh_image.jpg")
-        .print("center at 50vw","middle at 50vh")
-    ,
-    newTimer("primeTimer", 300),
-    getImage("prime").remove()
-    ,
-    newText("mask3"," "),
-    newTimer("mask3Timer", 500),                       
-    getText("mask3").remove()    
-    ,    
-    // Target, shown on screen until F or J is pressed
-    newImage("target","sun_bzzvbegxtfxrnaqh_imageflip.jpg")
-        .print("center at 50vw","middle at 50vh")
-    ,
-    newTimer("targetTimer", 300),
-    getImage("target").remove()
-    ,
-    newText("mask4"," ")
-    , 
-    newKey("answerTarget", "12")
-        .wait()                 // Only proceed after a keypress on F or J
-        .test.pressed("1")      // Set the "guide" Tooltip element's feedback text accordingly
-        .success( 
-            getImage("target").remove(),
-            newText("correct", "Correct")
-            .color("white")
-            .print("center at 50vw","center at 25vh"),
-            newTimer(" ", 500)
-            //.wait()
-            //getTooltip("guide").text("<p>No, the second word was <em>read</em>.</p> You should have pressed H.") 
-        )
-        .failure( 
-            getImage("target").remove(),
-            newText("incorrect", "Wrong")
-            .color("white")
-            .print("center at 50vw","center at 25vh"),
-            newTimer("  ", 500)
-            )
-    ,
-    newText("jitter", " "),
-    newTimer("jitterTimer", 600),
-    getText("jitter").remove()
-    
-)
 
 newTrial( "begin" ,
     // We will print all Text elements, horizontally centered
@@ -579,9 +474,6 @@ newTrial( "begin" ,
     newText("We are now ready to start the experiment.").color('white')
     ,
     newText("You will see the same types of trials in the actual experiment, but this time you will not receive feedback on your responses.").color("white")
-    ,
-    newText("There will be 6 blocks of tasks. Each block takes approx. \
-    5 minutes, after which you can take a short break. In total, the experiment takes 30-45 minutes.").color('white')
     ,
     newText("REMEMBER:")
         .color('white')
@@ -600,6 +492,8 @@ newTrial( "begin" ,
 // Executing experiment from stimuli.csv table, where participants are divided into two groups (A vs B)
 Template( "stimuli_jitter.csv" , 
     row => newTrial( "test" ,   
+        jitter = sample(jitterValues)
+        ,
         // Display all Text elements centered on the page, and log their display time code
         defaultText.center().print("center at 50vw","middle at 50vh").log()
         ,
@@ -617,9 +511,11 @@ Template( "stimuli_jitter.csv" ,
         getText("mask2").remove()
         ,
         // Prime, shown on screen for 300ms
-        filepath = "sun_"+row.uid+"_"+row.prime+".jpg",
-        newImage("Prime",filepath)
+        // filepath = "sun_"+row.prime,
+        newImage("Prime",row.prime)
          .print("center at 50vw","middle at 50vh")
+        ,
+        console.log(row.prime)
         ,
         newTimer("primeTimer", 300),
         getImage("Prime").remove()
@@ -630,9 +526,11 @@ Template( "stimuli_jitter.csv" ,
         getText("mask3").remove()
         ,        
         // Target, shown on screen for 300ms
-        filepathtarget = "sun_"+row.uid+"_"+row.target+".jpg",
-        newImage("Target",filepathtarget)
+        // filepathtarget = "sun_"+row.target,
+        newImage("Target",row.target)
          .print("center at 50vw","middle at 50vh")
+        ,
+        console.log(row.target)
         ,
         newTimer("targetTimer", 300),
         getImage("Target").remove()
@@ -645,15 +543,16 @@ Template( "stimuli_jitter.csv" ,
         getText("mask4").remove() // End of trial, move to next one
         , 
         newText("jitter", " "),
-        newTimer("jitterTimer", row.jitter),
+        newTimer("jitterTimer", jitter),
         getText("jitter").remove()
         
     )
     .log( "uid", row.uid )
-    .log( "match", row.match)
+    .log( "match?", row.match )
     .log( "prime", row.prime )
     .log( "target", row.target )
-    .log( "trial_id",row.trial_id)
+    .log( "jitter", jitter )
+    .log( "trial_id",row.trial_id )
     
 // group,match,prime,target,noun,adjective,order,lexical,swap_cat,swap_word,swap_index,trial_id
 )
